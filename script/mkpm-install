@@ -13,7 +13,7 @@ rootdir=$(cd $(dirname $(dirname $0)) && pwd -P)
 curdir=`pwd`
 
 while [ $# -gt 0 ]; do
-    $rootdir/script/mkpm-plumbing-install-one $1 || {
+    $rootdir/script/mkpm-install-plumbing $1 || {
         cd $curdir # if the plumbing exited in the middle of something
         exit 1
     }
