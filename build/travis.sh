@@ -6,7 +6,7 @@
 export CC=$MKPM_CC
 export CXX=$MKPM_CXX
 
-PACKAGES="Catch zlib libressl libevent tor"
+PACKAGES="http-parser Catch mkok-base zlib libressl libevent mkok-libevent-ng tor mkok-onion-ctrl"
 if [ ! -z "$MKPM_CROSS" ]; then
     PLUMBING=./script/mkpm-cross-ios-plumbing
 fi

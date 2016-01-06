@@ -3,7 +3,7 @@ pkg_repo=https://github.com/nodejs/http-parser
 
 pkg_make() {
     cd $mkpm_root/src/$pkg_name
-    cc $CPPFLAGS $CFLAGS -I. -c -o http_parser.o http_parser.c
+    $CC $CPPFLAGS $CFLAGS -I. -c -o http_parser.o http_parser.c
     ar cr libhttp_parser.a http_parser.o
 }
 
