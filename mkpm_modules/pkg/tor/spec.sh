@@ -19,7 +19,7 @@ mk_pkg_configure() {
                 --disable-unittests --disable-tool-name-check                  \
                 --with-openssl-dir=$mkpm_root/dist                             \
                 --with-zlib-dir=$mkpm_root/dist                                \
-                --with-libevent-dir=$mkpm_root/dist
+                --with-libevent-dir=$mkpm_root/dist $mkpm_configure_flags
 }
 
 mk_pkg_install() {
