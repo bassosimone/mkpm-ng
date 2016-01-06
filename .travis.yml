@@ -1,0 +1,29 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      sudo: false
+      compiler: g++-5
+      env: MKPM_CXX=g++-5
+           MKPM_CC=gcc-5
+    - os: linux
+      sudo: false
+      compiler: clang-3.6
+      env: MKPM_CXX=clang++-3.6
+           MKPM_CC=clang-3.6
+    - os: osx
+      compiler: clang++
+
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-precise-3.6
+      - ubuntu-toolchain-r-test
+    packages:
+      - clang-3.6
+      - g++-5
+
+script:
+  - export CC=$MKPM_CC CXX=$MKPM_CXX &&
+    ./script/mkpm-install Catch zlib libressl libevent tor
