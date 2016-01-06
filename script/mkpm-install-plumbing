@@ -11,14 +11,14 @@ mkpm_root=`pwd`/mkpm_modules
 mkpm_spec_repo=https://raw.githubusercontent.com/bassosimone/mkpm-install
 mkpm_spec_branch=master
 
-mk_pkg_clone() {
+pkg_clone() {
     cd $mkpm_root/src
-    rm -rf $mk_pkg_name
-    git clone --depth=4 --branch=$mk_pkg_branch $mk_pkg_repo
+    rm -rf $pkg_name
+    git clone --depth=4 --branch=$pkg_branch $pkg_repo
 }
 
-mk_pkg_configure() {
-    cd $mkpm_root/src/$mk_pkg_name
+pkg_configure() {
+    cd $mkpm_root/src/$pkg_name
     if [ -x autogen.sh ]; then
         ./autogen.sh
     elif [ -f configure.ac -o -f configure.in ]; then
@@ -29,15 +29,15 @@ mk_pkg_configure() {
     fi
 }
 
-mk_pkg_make() {
-    cd $mkpm_root/src/$mk_pkg_name
+pkg_make() {
+    cd $mkpm_root/src/$pkg_name
     if [ -f Makefile ]; then
         make $mkpm_make_flags
     fi
 }
 
-mk_pkg_install() {
-    cd $mkpm_root/src/$mk_pkg_name
+pkg_install() {
+    cd $mkpm_root/src/$pkg_name
     if [ -f Makefile ]; then
         make install $mkpm_make_flags
     fi
@@ -71,7 +71,7 @@ install -d $mkpm_root/dist
 # catch and handle errors, but turned out to be non-portable, hence the
 # implementation has been splitted in multiple scripts.
 #
-# The objective of this script is to build *just on* package, eventually
+# The objective of this script is to build *just one* package, eventually
 # modifying the environment, possibly dying on error (set -e), and discarding
 # any changes made to environment on exit.
 #
@@ -84,26 +84,26 @@ echo "= $1"
 echo "== source $1 spec =="
 mkpm_get_resource pkg/$1/spec.sh
 . $mkpm_root/pkg/$1/spec.sh
-test -z "$mk_pkg_branch" && mk_pkg_branch=master
+test -z "$pkg_branch" && pkg_branch=master
 
 oldpwd=`pwd`  # save directory
 
 echo "== clone $1 =="
-mk_pkg_clone
+pkg_clone
 
 cd $oldpwd   # restore
 
 echo "== configure $1 =="
-mk_pkg_configure
+pkg_configure
 
 cd $oldpwd   # restore
 
 echo "== make $1 =="
-mk_pkg_make
+pkg_make
 
 cd $oldpwd   # restore
 
 echo "== install $1 =="
-mk_pkg_install
+pkg_install
 
 cd $oldpwd   # restore
