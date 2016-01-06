@@ -1,0 +1,41 @@
+#!/bin/sh -e
+# Part of measurement-kit <https://measurement-kit.github.io/>.
+# Measurement-kit is free software. See AUTHORS and LICENSE for more
+# information on the copying conditions.
+
+rm -rf include.am
+
+install -d example
+echo "" >> include.am
+for source in `ls example/*.cpp`; do
+    binary=`echo $source | sed -e 's|.cpp$||g'`
+    slug=`echo $binary | sed -e 's|/|_|g' -e 's|-|_|g'`
+    echo "${slug}_SOURCES = $source" >> include.am
+    echo "if BUILD_EXAMPLES" >> include.am
+    echo "    noinst_PROGRAMS += $binary" >> include.am
+    echo "endif" >> include.am
+    echo "$binary" >> .gitignore
+done
+
+install -d include/mkok
+echo "" >> include.am
+dir="mkok"
+slug=`echo $dir | sed 's|/||g'`
+echo "${slug}includedir = \$(includedir)/$dir" >> include.am
+echo "${slug}include_HEADERS = # Empty" >> include.am
+for file in `ls include/$dir/*.hpp`; do
+    echo "${slug}include_HEADERS += $file" >> include.am
+done
+
+install -d test
+echo "" >> include.am
+for source in `ls test/*.cpp`; do
+    binary=`echo $source | sed -e 's|.cpp$||g'`
+    slug=`echo $binary | sed -e 's|/|_|g' -e 's|-|_|g'`
+    echo "${slug}_SOURCES = $source" >> include.am
+    echo "if BUILD_TESTS" >> include.am
+    echo "    check_PROGRAMS += $binary" >> include.am
+    echo "    TESTS += $binary" >> include.am
+    echo "endif" >> include.am
+    echo "$binary" >> .gitignore
+done

@@ -1,0 +1,23 @@
+#!/bin/sh -e
+# Part of measurement-kit <https://measurement-kit.github.io/>.
+# Measurement-kit is free software. See AUTHORS and LICENSE for more
+# information on the copying conditions.
+
+if [ $# -eq 0 ]; then
+    echo "usage: $0 command [options]"
+    exit 1
+fi
+
+root=$(cd $(dirname $(dirname $0)) && pwd -P) 
+command=$1
+shift
+
+if [ "$command" = "autohelp" ]; then
+    $root/script/mkpm-autohelp "$@"
+elif [ "$command" = "install" ]; then
+    $root/script/mkpm-install "$@"
+elif [ "$command" = "scaffolding" ]; then
+    $root/script/mkpm-scaffolding "$@"
+else
+    echo "available commands: autohelp, install, scaffolding"
+fi

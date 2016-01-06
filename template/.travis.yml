@@ -1,0 +1,66 @@
+language: cpp
+sudo: required
+dist: trusty
+
+matrix:
+  include:
+    - os: linux
+      compiler: g++-5
+      env: MKOK_CXX=g++-5
+    - os: linux
+      compiler: g++-5
+      env: MKOK_CXX=g++-5
+           VALGRIND=--disable-shared
+    - os: linux
+      compiler: clang-3.6
+      env: MKOK_CXX=clang++-3.6
+    - os: linux
+      compiler: clang-3.6
+      env: MKOK_CXX=clang++-3.6
+           VALGRIND=--disable-shared
+    - os: linux
+      compiler: g++-5
+      env: COVERAGE=--enable-coverage
+           GCOV=gcov-5
+           MKOK_CXX=g++-5
+           CXXFLAGS=-g
+    - os: osx
+      compiler: clang++
+      env: CPPFLAGS=-I/usr/local/opt/openssl/include
+           LDFLAGS=-L/usr/local/opt/openssl/lib
+
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-precise-3.6
+      - ubuntu-toolchain-r-test
+    packages:
+      - clang-3.6
+      - g++-5
+      - valgrind
+
+install:
+  - if [ "$MKOK_CXX" != "" ]; then export CXX=$MKOK_CXX; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      brew upgrade;
+      brew install libevent;
+    fi
+
+before_script:
+  - if [ "$GCOV" != "" ]; then pip install --user --upgrade cpp-coveralls; fi
+
+script:
+  - ./autogen.sh
+  - ./scripts/mkpm shell -- ./configure -q $COVERAGE $VALGRIND
+  - if [ "$VALGRIND" != "" ]; then
+      make run-valgrind V=0;
+    else
+      make check V=0;
+    fi
+
+after_script:
+  - if [ "$GCOV" != "" ]; then
+      coveralls --gcov $(which $GCOV) --gcov-options '\-lp'
+                --exclude mk_modules --exclude 'example/*.cpp'
+                --exclude config.h;
+    fi
