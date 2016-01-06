@@ -1,6 +1,7 @@
 language: cpp
 
 matrix:
+  fast_finish: true
   include:
     - os: linux
       sudo: false
@@ -14,6 +15,21 @@ matrix:
            MKPM_CC=clang-3.6
     - os: osx
       compiler: clang++
+    - os: osx
+      compiler: clang++
+      env: MKPM_CROSS=i386
+    - os: osx
+      compiler: clang++
+      env: MKPM_CROSS=x86_64
+    - os: osx
+      compiler: clang++
+      env: MKPM_CROSS=armv7
+    - os: osx
+      compiler: clang++
+      env: MKPM_CROSS=armv7s
+    - os: osx
+      compiler: clang++
+      env: MKPM_CROSS=arm64
 
 addons:
   apt:
@@ -25,5 +41,4 @@ addons:
       - g++-5
 
 script:
-  - export CC=$MKPM_CC CXX=$MKPM_CXX &&
-    ./script/mkpm-install Catch zlib libressl libevent tor
+  - ./build/travis.sh
