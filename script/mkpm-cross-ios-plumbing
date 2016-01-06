@@ -1,0 +1,46 @@
+#!/bin/sh -e
+# Part of measurement-kit <https://measurement-kit.github.io/>.
+# Measurement-kit is free software. See AUTHORS and LICENSE for more
+# information on the copying conditions.
+
+if [ $# -eq 0 ]; then
+    echo "usage: i386|x86_64|armv7|armv7s|arm64 [command [args...]]"
+    echo "e.g. $0 armv7s ./script/mkpm-install zlib libressl libevent tor"
+    exit 0
+fi
+
+arch=$1; shift
+if [ "$arch" = "i386" -o "$arch" = "x86_64" ]; then
+    platform="iPhoneSimulator"
+elif [ "$arch" = "armv7" -o "$arch" = "armv7s" -o "$arch" = "arm64" ]; then
+    platform="iPhoneOS"
+    export mkpm_configure_flags="--host=arm-apple-darwin14 --target=arm-apple-darwin14"
+else
+    echo "fatal: unsupported arch"
+    exit 1
+fi
+
+avail=`xcodebuild -showsdks | grep "iphoneos"`
+if [ -z "$avail" ]; then
+    echo "fatal: no available SDK?"
+    exit 1
+fi
+first=`echo "$avail" | head -n1`
+sdk_version=`echo "$first" | cut -d\  -f2`
+
+developer=`xcode-select -print-path`
+min_ios_version="7.1"
+
+export PATH="${developer}/Toolchains/XcodeDefault.xctoolchain/usr/bin/:${developer}/Platforms/${platform}.platform/Developer/usr/bin/:${developer}/Toolchains/XcodeDefault.xctoolchain/usr/bin:${developer}/usr/bin:${PATH}"
+export CC="/usr/bin/gcc -arch ${arch} -miphoneos-version-min=${min_ios_version}"
+export CXX="/usr/bin/g++ -arch ${arch} -miphoneos-version-min=${min_ios_version}"
+export CPPFLAGS="-isysroot ${developer}/Platforms/${platform}.platform/Developer/SDKs/${platform}${sdk_version}.sdk"
+export CFLAGS="-isysroot ${developer}/Platforms/${platform}.platform/Developer/SDKs/${platform}${sdk_version}.sdk"
+export CXXFLAGS="-isysroot ${developer}/Platforms/${platform}.platform/Developer/SDKs/${platform}${sdk_version}.sdk"
+export mkpm_cross="ios"
+
+if [ "$#" -eq 0 ]; then
+    set -- env
+fi
+
+"$@"

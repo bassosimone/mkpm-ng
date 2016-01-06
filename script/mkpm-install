@@ -58,6 +58,12 @@ mkpm_install_resource() {
     install $mkpm_root/$1 $2
 }
 
+if [ $# -eq 0 ]; then
+    echo "usage: $0 install [package...]"
+    echo "e.g. $0 install zlib libressl libevent tor"
+    exit 0
+fi
+
 install -d $mkpm_root
 install -d $mkpm_root/src
 install -d $mkpm_root/dist
