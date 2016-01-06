@@ -10,8 +10,12 @@ if [ $# -eq 0 ]; then
 fi
 
 arch=$1; shift
-if [ "$arch" = "i386" -o "$arch" = "x86_64" ]; then
+if [ "$arch" = "i386" ]; then
     platform="iPhoneSimulator"
+    export mkpm_configure_flags="--host=i386-apple-darwin14 --target=i386-apple-darwin14"
+elif [ "$arch" = "x86_64" ]; then
+    platform="iPhoneSimulator"
+    export mkpm_configure_flags="--host=x86_64-apple-darwin14 --target=x86_64-apple-darwin14"
 elif [ "$arch" = "armv7" -o "$arch" = "armv7s" -o "$arch" = "arm64" ]; then
     platform="iPhoneOS"
     export mkpm_configure_flags="--host=arm-apple-darwin14 --target=arm-apple-darwin14"
