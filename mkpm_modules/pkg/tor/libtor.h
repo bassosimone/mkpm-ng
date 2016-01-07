@@ -31,6 +31,8 @@ extern "C" {
 
 int tor_main(int argc, char **argv);
 struct event_base *tor_libevent_get_base(void);
+void tor_on_started(void (*callback)(void *), void *);
+void tor_break_loop(void);
 
 #ifdef __cplusplus
 }
