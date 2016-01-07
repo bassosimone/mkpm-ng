@@ -98,24 +98,24 @@ mkpm_get_resource pkg/$1/spec.sh
 . $mkpm_root/pkg/$1/spec.sh
 test -z "$pkg_branch" && pkg_branch=master
 
-oldpwd=`pwd`  # save directory
+saved_pwd=`pwd`  # save directory
 
 echo "== clone $1 =="
 pkg_clone
 
-cd $oldpwd   # restore
+cd $saved_pwd   # restore
 
 echo "== configure $1 =="
 pkg_configure
 
-cd $oldpwd   # restore
+cd $saved_pwd   # restore
 
 echo "== make $1 =="
 pkg_make
 
-cd $oldpwd   # restore
+cd $saved_pwd   # restore
 
 echo "== install $1 =="
 pkg_install
 
-cd $oldpwd   # restore
+cd $saved_pwd   # restore
