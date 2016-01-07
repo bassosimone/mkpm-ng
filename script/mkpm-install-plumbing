@@ -9,6 +9,30 @@ mkpm_root=`pwd`/mkpm_modules
 mkpm_spec_repo=https://raw.githubusercontent.com/bassosimone/mkpm-install
 mkpm_spec_branch=master
 
+mkpm_get_resource() {
+    install -d $mkpm_root/`dirname $1`
+    if [ ! -f $mkpm_root/$1 ]; then
+        curl -#o $mkpm_root/$1 $mkpm_spec_repo/$mkpm_spec_branch/mkpm_modules/$1
+    fi
+}
+mkpm_apply_patch() {
+    mkpm_get_resource $1
+    git apply $mkpm_root/$1
+}
+mkpm_install_resource() {
+    mkpm_get_resource $1
+    install $mkpm_root/$1 $2
+}
+
+if [ $# -ne 1 ]; then
+    echo "usage: $0 package"
+    exit 0
+fi
+
+install -d $mkpm_root
+install -d $mkpm_root/src
+install -d $mkpm_root/dist
+
 pkg_clone() {
     cd $mkpm_root/src
     rm -rf $pkg_name
@@ -40,30 +64,6 @@ pkg_install() {
         make install $mkpm_make_flags
     fi
 }
-
-mkpm_get_resource() {
-    install -d $mkpm_root/`dirname $1`
-    if [ ! -f $mkpm_root/$1 ]; then
-        curl -#o $mkpm_root/$1 $mkpm_spec_repo/$mkpm_spec_branch/mkpm_modules/$1
-    fi
-}
-mkpm_apply_patch() {
-    mkpm_get_resource $1
-    git apply $mkpm_root/$1
-}
-mkpm_install_resource() {
-    mkpm_get_resource $1
-    install $mkpm_root/$1 $2
-}
-
-if [ $# -ne 1 ]; then
-    echo "usage: $0 package"
-    exit 0
-fi
-
-install -d $mkpm_root
-install -d $mkpm_root/src
-install -d $mkpm_root/dist
 
 # This used to be a larger script relying on subshells and `set -e` to
 # catch and handle errors, but turned out to be non-portable, hence the
