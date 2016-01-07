@@ -33,7 +33,7 @@ m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
 missing
-mk_modules
+mkpm_modules
 stamp-h1
 test-driver
 test-suite.log

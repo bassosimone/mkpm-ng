@@ -16,3 +16,5 @@ run-valgrind: $(check_PROGRAMS)
 	for test_name in $(TESTS); do                                          \
 	  $(VALGRIND) $$test_name || exit 1;                                   \
 	done
+
+include include.am
