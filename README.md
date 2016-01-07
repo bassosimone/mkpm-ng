@@ -8,20 +8,24 @@ taks:
 
 1. allows you to generate the scaffolding of a Measurement Kit subproject
 
-2. automates building of dependencies (e.g. libevent, tor)
+2. automates (cross-)compiling of dependencies (e.g. libevent, tor)
 
 This repository contains the script itself (`./script/mkpm`), the
 specification for building dependencies (see inside `./mkpm_modules/pkg`),
 and all the scaffolding files for generating a new Measurement Kit
-subproject (see inside `template`).
+subproject (see inside `template` dir).
 
 ## Generating the scaffolding of a new project
 
 Copy `script/mkpm-scaffolding` inside the empty directory of the project
-and then run the following command:
+and then run the following commands:
 
 ```
-./script/mkpm-scaffolding
+curl -O# https://raw.githubusercontent.com/bassosimone/mkpm-ng/master/script/up
+less up  # check that what you see makes sense
+chmod +x up
+./up
+rm up
 ```
 
 This will download from GitHub all the scaffolding you need for developing
@@ -35,6 +39,9 @@ To sync-up with later upstream change in scaffolding files, run:
 ```
 ./script/mkpm scaffolding
 ```
+
+After this command, merge manually possible changes occurred in scaffolding
+files that you may have modified first you first downloaded scaffolding.
 
 To auto-generate a `include.am` file telling automake how to install your
 headers and compile your tests and examples, run:
@@ -58,13 +65,13 @@ For example, to download, compile, etc. Tor and all its dependencies you
 run this command:
 
 ```
-./scripts/mkpm install zlib libressl libevent tor
+./scripts/mkpm install tor
 ```
 
 Sources are downloaded and compiled in `./mkpm_modules/src/$package`, and
 headers and libraries are installed inside `./mkpm_modules/dist`. Files
 inside such directory follow the Unix convention (i.e. headers are inside
-`/include`, libraries inside `/lib`).
+`.../include`, libraries inside `.../lib`).
 
 To use the compiled dependencies, either manually set `CPPFLAGS` and
 `LDFLAGS` to point to `./mkpm_modules/dist`, or use the `shell` subcommand,
@@ -89,6 +96,5 @@ To cross compile Tor and all of its dependencies for iOS/arm64, run the
 following command:
 
 ```
-./scripts/mkpm-cross-ios-plumbing arm64                                        \
-    ./scripts/mkpm install zlib libressl libevent tor
+./scripts/mkpm-cross-ios-plumbing arm64 ./scripts/mkpm install tor
 ```

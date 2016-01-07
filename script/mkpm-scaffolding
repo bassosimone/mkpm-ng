@@ -10,23 +10,8 @@ if [ -z "$mkpm_spec_branch" ]; then
     mkpm_spec_branch=master
 fi
 
-for name in Doxyfile.in Makefile.am configure.ac .clang-format .gitignore      \
-            .travis.yml autogen.sh include.am; do
-    curl -#O $mkpm_spec_repo/$mkpm_spec_branch/template/$name
-done
-chmod +x autogen.sh
-
-install -d m4
-curl -#o m4/mkpm.m4 $mkpm_spec_repo/$mkpm_spec_branch/template/m4/mkpm.m4
-
-install -d script
-for name in mkpm-cross-ios-plumbing mkpm-install mkpm-install-plumbing         \
-            mkpm-autohelp mkpm mkpm-shell mkpm-rm; do
-    curl -#o script/$name $mkpm_spec_repo/$mkpm_spec_branch/script/$name
-    chmod +x script/$name
-done
-
-# Update self. Must be last operation
-curl -#o script/x $mkpm_spec_repo/$mkpm_spec_branch/script/mkpm-scaffolding
-chmod +x script/x
-mv script/x script/mkpm-scaffolding
+# Download script that will update all the scaffolding
+install -d $mkpm_root/script
+curl -#o $mkpm_root/script/up $mkpm_spec_repo/$mkpm_spec_branch/script/up
+chmod +x $mkpm_root/script/up
+exec $mkpm_root/script/up

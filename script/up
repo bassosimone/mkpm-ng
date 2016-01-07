@@ -1,0 +1,30 @@
+#!/bin/sh -e
+# Part of measurement-kit <https://measurement-kit.github.io/>.
+# Measurement-kit is free software. See AUTHORS and LICENSE for more
+# information on the copying conditions.
+
+mkpm_root=`pwd`/mkpm_modules
+mkpm_spec_repo=https://raw.githubusercontent.com/bassosimone/mkpm-install
+mkpm_spec_branch=master
+if [ -z "$mkpm_spec_branch" ]; then
+    mkpm_spec_branch=master
+fi
+
+for name in Doxyfile.in Makefile.am configure.ac .clang-format .gitignore      \
+            .travis.yml autogen.sh include.am; do
+    echo "$name:"
+    curl -#O $mkpm_spec_repo/$mkpm_spec_branch/template/$name
+done
+chmod +x autogen.sh
+
+install -d m4
+echo "m4/mkpm.m4:"
+curl -#o m4/mkpm.m4 $mkpm_spec_repo/$mkpm_spec_branch/template/m4/mkpm.m4
+
+install -d script
+for name in mkpm-cross-ios-plumbing mkpm-install mkpm-install-plumbing         \
+            mkpm-autohelp mkpm mkpm-shell mkpm-rm; do
+    echo "script/$name:"
+    curl -#o script/$name $mkpm_spec_repo/$mkpm_spec_branch/script/$name
+    chmod +x script/$name
+done
