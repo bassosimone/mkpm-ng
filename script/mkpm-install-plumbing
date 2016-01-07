@@ -3,9 +3,7 @@
 # Measurement-kit is free software. See AUTHORS and LICENSE for more
 # information on the copying conditions.
 
-if [ "$mkpm_debug" ]; then
-    set -x
-fi
+if [ "$mkpm_debug" ]; then set -x; fi
 
 mkpm_root=`pwd`/mkpm_modules
 mkpm_spec_repo=https://raw.githubusercontent.com/bassosimone/mkpm-install
@@ -86,12 +84,8 @@ export CPPFLAGS="$CPPFLAGS -I$mkpm_root/dist/include"
 export LDFLAGS="$LDFLAGS -L$mkpm_root/dist/lib"
 
 # Provide default CC and CXX
-if [ -z "$CC" ]; then
-    export CC="cc"
-fi
-if [ -z "$CXX" ]; then
-    export CXX="c++"
-fi
+if [ -z "$CC" ]; then export CC="cc"; fi
+if [ -z "$CXX" ]; then export CXX="c++"; fi
 
 echo "== source $1 spec =="
 mkpm_get_resource pkg/$1/spec.sh
@@ -99,23 +93,8 @@ mkpm_get_resource pkg/$1/spec.sh
 test -z "$pkg_branch" && pkg_branch=master
 
 saved_pwd=`pwd`  # save directory
-
-echo "== clone $1 =="
-pkg_clone
-
-cd $saved_pwd   # restore
-
-echo "== configure $1 =="
-pkg_configure
-
-cd $saved_pwd   # restore
-
-echo "== make $1 =="
-pkg_make
-
-cd $saved_pwd   # restore
-
-echo "== install $1 =="
-pkg_install
-
-cd $saved_pwd   # restore
+for phase in clone configure make install; do
+    echo "== $phase $1 =="
+    pkg_${phase}
+    cd $saved_pwd   # restore
+done
