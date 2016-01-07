@@ -9,7 +9,9 @@ scriptdir=$(cd $(dirname $0) && pwd -P)
 
 mkpm_root=`pwd`/mkpm_modules
 mkpm_spec_repo=https://raw.githubusercontent.com/bassosimone/mkpm-install
-mkpm_spec_branch=master
+if [ -z "$mkpm_spec_branch" ]; then
+    mkpm_spec_branch=master
+fi
 
 mkpm_get_resource() {
     install -d $mkpm_root/`dirname $1`
