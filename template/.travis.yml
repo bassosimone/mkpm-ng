@@ -52,7 +52,7 @@ before_script:
 
 script:
   - ./autogen.sh
-  - ./script/mkpm shell -- ./configure -q $COVERAGE $VALGRIND
+  - ./script/mkpm shell ./configure -q $COVERAGE $VALGRIND
   - if [ "$VALGRIND" != "" ]; then
       make run-valgrind V=0;
     else

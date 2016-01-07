@@ -1,0 +1,9 @@
+#!/bin/sh -e
+# Part of measurement-kit <https://measurement-kit.github.io/>.
+# Measurement-kit is free software. See AUTHORS and LICENSE for more
+# information on the copying conditions.
+
+mkpm_root=`pwd`/mkpm_modules
+export CPPFLAGS="$CPPFLAGS -I$mkpm_root/dist/include"
+export LDFLAGS="$LDFLAGS -L$mkpm_root/dist/lib"
+"$@"

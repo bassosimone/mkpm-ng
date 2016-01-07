@@ -18,6 +18,8 @@ elif [ "$command" = "install" ]; then
     $root/script/mkpm-install "$@"
 elif [ "$command" = "scaffolding" ]; then
     $root/script/mkpm-scaffolding "$@"
+elif [ "$command" = "shell" ]; then
+    $root/script/mkpm-shell "$@"
 else
-    echo "available commands: autohelp, install, scaffolding"
+    echo "available commands: autohelp, install, scaffolding, shell"
 fi
