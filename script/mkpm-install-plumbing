@@ -46,7 +46,7 @@ pkg_install() {
 mkpm_get_resource() {
     install -d $mkpm_root/`dirname $1`
     if [ ! -f $mkpm_root/$1 ]; then
-        curl -o $mkpm_root/$1 $mkpm_spec_repo/$mkpm_spec_branch/mkpm_modules/$1
+        curl -#o $mkpm_root/$1 $mkpm_spec_repo/$mkpm_spec_branch/mkpm_modules/$1
     fi
 }
 mkpm_apply_patch() {
