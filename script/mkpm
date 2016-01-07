@@ -8,7 +8,7 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-root=$(cd $(dirname $(dirname $0)) && pwd -P) 
+root=$(cd $(dirname $(dirname $0)) && pwd -P)
 command=$1
 shift
 
@@ -18,8 +18,10 @@ elif [ "$command" = "install" ]; then
     $root/script/mkpm-install "$@"
 elif [ "$command" = "scaffolding" ]; then
     $root/script/mkpm-scaffolding "$@"
+elif [ "$command" = "rm" ]; then
+    $root/script/mkpm-rm "$@"
 elif [ "$command" = "shell" ]; then
     $root/script/mkpm-shell "$@"
 else
-    echo "available commands: autohelp, install, scaffolding, shell"
+    echo "available commands: autohelp, install, scaffolding, rm, shell"
 fi

@@ -1,2 +1,4 @@
+mkpm_modules/.deps
+mkpm_modules/.installed
 mkpm_modules/dist
 mkpm_modules/src

@@ -5,6 +5,8 @@
 
 if [ "$mkpm_debug" ]; then set -x; fi
 
+scriptdir=$(cd $(dirname $0) && pwd -P) 
+
 mkpm_root=`pwd`/mkpm_modules
 mkpm_spec_repo=https://raw.githubusercontent.com/bassosimone/mkpm-install
 mkpm_spec_branch=master
@@ -30,13 +32,37 @@ if [ $# -ne 1 ]; then
 fi
 
 install -d $mkpm_root
+install -d $mkpm_root/.installed
+install -d $mkpm_root/.deps
 install -d $mkpm_root/src
 install -d $mkpm_root/dist
+
+pkg_depend() {
+    if [ -f $mkpm_root/.installed/$pkg_name ]; then
+        echo "$pkg_name: already installed"
+        echo "run '$scriptdir/mkpm rm $pkg_name' to remove it"
+        exit 0
+    fi
+    if [ -f $mkpm_root/.deps/$pkg_name ]; then
+        echo "$pkg_name: detected dependencies loop"
+        exit 0
+    fi
+    touch $mkpm_root/.deps/$pkg_name
+    for dep in $pkg_deps; do
+        echo "$pkg_name: dependency: '$dep'"
+        $0 $dep
+    done
+    rm $mkpm_root/.deps/$pkg_name
+}
 
 pkg_clone() {
     cd $mkpm_root/src
     rm -rf $pkg_name
-    git clone --depth=4 --branch=$pkg_branch $pkg_repo
+    if [ ! -z "$pkg_repo" ]; then
+        git clone --depth=4 --branch=$pkg_branch $pkg_repo
+    else
+        mkdir $mkpm_root/src/$pkg_name  # Following steps assume this
+    fi
 }
 
 pkg_configure() {
@@ -77,7 +103,7 @@ pkg_install() {
 #
 #    - Written by a very frustrated Simone on 2016-01-06.
 
-echo "= $1"
+echo "* $1"
 
 # Allow ./configure to find what we've compiled
 export CPPFLAGS="$CPPFLAGS -I$mkpm_root/dist/include"
@@ -87,14 +113,15 @@ export LDFLAGS="$LDFLAGS -L$mkpm_root/dist/lib"
 if [ -z "$CC" ]; then export CC="cc"; fi
 if [ -z "$CXX" ]; then export CXX="c++"; fi
 
-echo "== source $1 spec =="
+echo "- spec($1)"
 mkpm_get_resource pkg/$1/spec.sh
 . $mkpm_root/pkg/$1/spec.sh
 test -z "$pkg_branch" && pkg_branch=master
 
 saved_pwd=`pwd`  # save directory
-for phase in clone configure make install; do
-    echo "== $phase $1 =="
+for phase in depend clone configure make install; do
+    echo "- $phase($1)"
     pkg_${phase}
     cd $saved_pwd   # restore
 done
+touch $mkpm_root/.installed/$pkg_name

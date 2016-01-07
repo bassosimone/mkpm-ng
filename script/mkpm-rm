@@ -3,10 +3,7 @@
 # Measurement-kit is free software. See AUTHORS and LICENSE for more
 # information on the copying conditions.
 
-export CC=$MKPM_CC
-export CXX=$MKPM_CXX
-
-if [ ! -z "$MKPM_CROSS" ]; then
-    PLUMBING=./script/mkpm-cross-ios-plumbing
+mkpm_root=`pwd`/mkpm_modules
+if [ -f $mkpm_root/.installed/$1 ]; then
+    rm -f $mkpm_root/.installed/$1
 fi
-$PLUMBING $MKPM_CROSS ./script/mkpm-install `ls mkpm_modules/pkg`
