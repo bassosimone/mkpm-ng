@@ -7,7 +7,6 @@ pkg_clone() {
     rm -rf $pkg_name
     git clone --depth=4 $pkg_repo
     cd $pkg_name
-    mkpm_apply_patch pkg/$pkg_name/000.diff
     if [ "$mkpm_cross" = "ios" ]; then
         mkpm_apply_patch pkg/$pkg_name/001.diff
     fi
