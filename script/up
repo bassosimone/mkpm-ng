@@ -23,7 +23,7 @@ curl -#o m4/mkpm.m4 $mkpm_spec_repo/$mkpm_spec_branch/template/m4/mkpm.m4
 
 install -d script
 for name in mkpm-cross-ios-plumbing mkpm-install mkpm-install-plumbing         \
-            mkpm-autohelp mkpm mkpm-shell mkpm-rm; do
+            mkpm-autohelp mkpm mkpm-shell mkpm-rm mkpm-scaffolding; do
     echo "script/$name:"
     curl -#o script/$name $mkpm_spec_repo/$mkpm_spec_branch/script/$name
     chmod +x script/$name
