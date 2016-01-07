@@ -66,15 +66,15 @@ AC_DEFUN([MKPM_REQUIRE_LIBTOR], [
     AS_HELP_STRING([--with-libtor, Libraries containing all Tor sources]), [
       CPPFLAGS="$CPPFLAGS -I$withval/include"
       LDFLAGS="$LDFLAGS -L$withval/lib"], [])
-  AC_CHECK_HEADERS(tor/libtor.h, [], [AC_MSG_ERROR([libtor.h not found])])
+  AC_CHECK_HEADERS(libtor.h, [], [AC_MSG_ERROR([libtor.h not found])])
 
   saved_LIBS="$LIBS"
-  LIBS="-lkeccak-tiny -led25519_ref10 -led25519_donna -lcurve25519_donna -lor-trunnel -lor-event -lor-crypto -lor -ltor $LIBS"
+  LIBS="-ltor -lor-crypto -lkeccak-tiny -led25519_ref10 -led25519_donna -lcurve25519_donna -lor-trunnel -lor-event -lor $LIBS"
   AC_MSG_CHECKING([whether we can link with Tor])
   AC_LANG_PUSH([C])
   AC_COMPILE_IFELSE(
     [AC_LANG_PROGRAM([
-#include <tor/libtor.h>
+#include <libtor.h>
     ], [
 char *args[] = {
   "tor",
