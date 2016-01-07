@@ -1,0 +1,37 @@
+commit f5fbecb3e5ce145243c30b55beb74b5fcfb0c771
+Author: Simone Basso <bassosimone@gmail.com>
+Date:   Thu Dec 24 20:29:01 2015 +0100
+
+    Minimal changes to use Tor as a library
+
+    Specifically, it helps a lot to have a function called when the
+    event loop is started, because we can retrieve tor event_base and
+    run as a callback inside tor own's event loop.
+
+diff --git a/src/or/main.c b/src/or/main.c
+index c8b1283..0059964 100644
+--- a/src/or/main.c
++++ b/src/or/main.c
+@@ -2543,6 +2543,12 @@ run_main_loop_once(void)
+   return 1;
+ }
+ 
++static void (*running_cb)(void) = NULL;
++
++void tor_on_started(void (*callback)(void)) {
++  running_cb = callback;
++}
++
+ /** Run the run_main_loop_once() function until it declares itself done,
+  * and return its final return value.
+  *
+@@ -2551,6 +2557,9 @@ run_main_loop_once(void)
+ static int
+ run_main_loop_until_done(void)
+ {
++  if (running_cb != NULL) {
++    running_cb();
++  }
+   int loop_result = 1;
+   do {
+     loop_result = run_main_loop_once();

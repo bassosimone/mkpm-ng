@@ -11,6 +11,7 @@ pkg_clone() {
     if [ "$mkpm_cross" = "ios" ]; then
         mkpm_apply_patch pkg/$pkg_name/001.diff
     fi
+    mkpm_apply_patch pkg/$pkg_name/002.diff
 }
 
 pkg_configure() {
