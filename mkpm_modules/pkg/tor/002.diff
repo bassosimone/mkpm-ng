@@ -9,32 +9,36 @@ Date:   Thu Dec 24 20:29:01 2015 +0100
     run as a callback inside tor own's event loop.
 
 diff --git a/src/or/main.c b/src/or/main.c
-index c8b1283..428db6d 100644
+index 0ab8f10..2a1a12a 100644
 --- a/src/or/main.c
 +++ b/src/or/main.c
-@@ -2482,6 +2482,12 @@ do_main_loop(void)
+@@ -2482,6 +2482,13 @@ do_main_loop(void)
    return run_main_loop_until_done();
  }
  
 +static volatile int should_break = 0;
 +
 +void tor_break_loop(void) {
++    event_base_loopbreak(tor_libevent_get_base());
 +    should_break = 1;
 +}
 +
  /**
   * Run the main loop a single time. Return 0 for "exit"; -1 for "exit with
   * error", and 1 for "run this again."
-@@ -2493,6 +2499,8 @@ run_main_loop_once(void)
+@@ -2510,6 +2517,11 @@ run_main_loop_once(void)
+   loop_result = event_base_loop(tor_libevent_get_base(),
+                                 called_loop_once ? EVLOOP_ONCE : 0);
  
-   if (nt_service_is_stopping())
-     return 0;
-+  if (should_break)
++  if (should_break) {
++    should_break = 0;
 +    return 0;
- 
- #ifndef _WIN32
-   /* Make it easier to tell whether libevent failure is our fault or not. */
-@@ -2543,6 +2551,14 @@ run_main_loop_once(void)
++  }
++
+   /* let catch() handle things like ^c, and otherwise don't worry about it */
+   if (loop_result < 0) {
+     int e = tor_socket_errno(-1);
+@@ -2543,6 +2555,14 @@ run_main_loop_once(void)
    return 1;
  }
  
@@ -49,7 +53,7 @@ index c8b1283..428db6d 100644
  /** Run the run_main_loop_once() function until it declares itself done,
   * and return its final return value.
   *
-@@ -2551,6 +2567,9 @@ run_main_loop_once(void)
+@@ -2551,6 +2571,9 @@ run_main_loop_once(void)
  static int
  run_main_loop_until_done(void)
  {
