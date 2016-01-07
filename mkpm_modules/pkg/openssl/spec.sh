@@ -1,6 +1,7 @@
 pkg_name=openssl
 pkg_repo=https://github.com/openssl/$pkg_name
 pkg_branch=OpenSSL_1_0_2-stable
+pkg_deps="zlib"
 
 pkg_configure() {
     cd $mkpm_root/src/$pkg_name

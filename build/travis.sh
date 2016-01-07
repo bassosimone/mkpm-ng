@@ -6,8 +6,10 @@
 export CC=$MKPM_CC
 export CXX=$MKPM_CXX
 
-PACKAGES="http-parser Catch mkok-base zlib libressl libevent mkok-libevent-ng tor mkok-onion-ctrl"
 if [ ! -z "$MKPM_CROSS" ]; then
     PLUMBING=./script/mkpm-cross-ios-plumbing
 fi
+# It is complex to build OpenSSL because it has a custom build system, hence
+# disable its compilation for now (also, we're using LibReSSL...).
+PACKAGES=`ls mkpm_modules/pkg | grep -v openssl`
 $PLUMBING $MKPM_CROSS ./script/mkpm-install $PACKAGES

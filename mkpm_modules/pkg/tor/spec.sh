@@ -1,5 +1,6 @@
 pkg_name=tor
 pkg_repo=https://git.torproject.org/tor.git
+pkg_deps="zlib libressl libevent"
 
 pkg_clone() {
     cd $mkpm_root/src
