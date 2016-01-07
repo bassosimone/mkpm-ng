@@ -12,6 +12,7 @@ fi
 
 # Download script that will update all the scaffolding
 install -d $mkpm_root/script
+echo "$mkpm_root/script/up:"
 curl -#o $mkpm_root/script/up $mkpm_spec_repo/$mkpm_spec_branch/script/up
 chmod +x $mkpm_root/script/up
 exec $mkpm_root/script/up
