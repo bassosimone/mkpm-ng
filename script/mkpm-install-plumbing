@@ -109,10 +109,6 @@ echo "* $1"
 export CPPFLAGS="$CPPFLAGS -I$mkpm_root/dist/include"
 export LDFLAGS="$LDFLAGS -L$mkpm_root/dist/lib"
 
-# Provide default CC and CXX
-if [ -z "$CC" ]; then export CC="cc"; fi
-if [ -z "$CXX" ]; then export CXX="c++"; fi
-
 echo "- spec($1)"
 mkpm_get_resource pkg/$1/spec.sh
 . $mkpm_root/pkg/$1/spec.sh
