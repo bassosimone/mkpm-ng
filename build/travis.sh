@@ -9,4 +9,7 @@ export CXX=$MKPM_CXX
 if [ ! -z "$MKPM_CROSS" ]; then
     PLUMBING=./script/mkpm-cross-ios-plumbing
 fi
-$PLUMBING $MKPM_CROSS ./script/mkpm-install `ls mkpm_modules/pkg`
+# It is complex to build OpenSSL because it has a custom build system, hence
+# disable its compilation for now (also, we're using LibReSSL...).
+PACKAGES=`ls mkpm_modules/pkg | grep -v openssl`
+$PLUMBING $MKPM_CROSS ./script/mkpm-install $PACKAGES
