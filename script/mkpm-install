@@ -4,16 +4,20 @@
 # information on the copying conditions.
 
 if [ $# -eq 0 ]; then
-    echo "usage: $0 [package...]"
-    echo "e.g. $0 tor"
+    echo "usage: $0 [-n] package [...]"
+    echo "    -n : turns off recursive resolution of dependencies"
     exit 0
+fi
+if [ "$1" = "-n" ]; then
+    phases="clone configure make install"
+    shift
 fi
 
 rootdir=$(cd $(dirname $(dirname $0)) && pwd -P)
 curdir=`pwd`
 
 while [ $# -gt 0 ]; do
-    $rootdir/script/mkpm-install-plumbing $1 || {
+    $rootdir/script/mkpm-install-plumbing $1 $phases || {
         cd $curdir # if the plumbing exited in the middle of something
         exit 1
     }
