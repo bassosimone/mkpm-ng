@@ -33,9 +33,14 @@ mkpm_install_resource() {
     install $mkpm_root/resource/$1 $2
 }
 
-if [ $# -ne 1 ]; then
-    echo "usage: $0 package"
+if [ $# -lt 1 ]; then
+    echo "usage: $0 package [phase...]"
+    echo "  available phases: depend, clone, configure, make, install"
+    echo "  by default all phases are executed"
     exit 0
+fi
+if [ $# -eq 1 ]; then
+    set -- $1 depend clone configure make install
 fi
 
 install -d $mkpm_root
@@ -111,20 +116,22 @@ pkg_install() {
 #
 #    - Written by a very frustrated Simone on 2016-01-06.
 
-echo "* $1"
+pkg=$1
+shift
+echo "* $pkg"
 
 # Allow ./configure to find what we've compiled
 export CPPFLAGS="$CPPFLAGS -I$mkpm_root/dist/include"
 export LDFLAGS="$LDFLAGS -L$mkpm_root/dist/lib"
 
-echo "- spec($1)"
-mkpm_get_resource pkg/$1/spec.sh
-. $mkpm_root/resource/pkg/$1/spec.sh
+echo "- spec($pkg)"
+mkpm_get_resource pkg/$pkg/spec.sh
+. $mkpm_root/resource/pkg/$pkg/spec.sh
 test -z "$pkg_branch" && pkg_branch=master
 
 saved_pwd=`pwd`  # save directory
-for phase in depend clone configure make install; do
-    echo "- $phase($1)"
+for phase in $@; do
+    echo "- $phase($pkg)"
     pkg_${phase}
     cd $saved_pwd   # restore
 done
