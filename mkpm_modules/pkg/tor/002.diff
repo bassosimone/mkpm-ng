@@ -4,29 +4,49 @@ Date:   Thu Dec 24 20:29:01 2015 +0100
 
     Minimal changes to use Tor as a library
 
+    The general idea of this is to treat tor as an event loop just like
+    the libevent event loop, only more complext and powerful.
+
     Specifically, it helps a lot to have a function called when the
     event loop is started, because we can retrieve tor event_base and
     run as a callback inside tor own's event loop.
 
+    The second thing we need to implement this functionality is the
+    equivalent of event_base_loopbreak() but implemented for the whole
+    tor main loop, such that we can exit it.
+
 diff --git a/src/or/main.c b/src/or/main.c
-index 0ab8f10..2a1a12a 100644
+index 0ab8f10..5a8aba3 100644
 --- a/src/or/main.c
 +++ b/src/or/main.c
-@@ -2482,6 +2482,13 @@ do_main_loop(void)
-   return run_main_loop_until_done();
- }
+@@ -2007,6 +2007,11 @@ static periodic_timer_t *second_timer = NULL;
+ /** Number of libevent errors in the last second: we die if we get too many. */
+ static int n_libevent_errors = 0;
  
 +static volatile int should_break = 0;
-+
 +void tor_break_loop(void) {
-+    event_base_loopbreak(tor_libevent_get_base());
 +    should_break = 1;
 +}
 +
- /**
-  * Run the main loop a single time. Return 0 for "exit"; -1 for "exit with
-  * error", and 1 for "run this again."
-@@ -2510,6 +2517,11 @@ run_main_loop_once(void)
+ /** Libevent callback: invoked once every second. */
+ static void
+ second_elapsed_callback(periodic_timer_t *timer, void *arg)
+@@ -2023,6 +2028,14 @@ second_elapsed_callback(periodic_timer_t *timer, void *arg)
+   (void)timer;
+   (void)arg;
+ 
++  /* It does not work if we just call event_base_loopbrea/k() from the
++   * tor_break_loop() function, we need instead to tell libevent to break
++   * out of the loop in this periodic callback (why?). */
++  if (should_break) {
++    event_base_loopbreak(tor_libevent_get_base());
++    return;
++  }
++
+   n_libevent_errors = 0;
+ 
+   /* log_notice(LD_GENERAL, "Tick."); */
+@@ -2510,6 +2523,11 @@ run_main_loop_once(void)
    loop_result = event_base_loop(tor_libevent_get_base(),
                                  called_loop_once ? EVLOOP_ONCE : 0);
  
@@ -38,7 +58,7 @@ index 0ab8f10..2a1a12a 100644
    /* let catch() handle things like ^c, and otherwise don't worry about it */
    if (loop_result < 0) {
      int e = tor_socket_errno(-1);
-@@ -2543,6 +2555,14 @@ run_main_loop_once(void)
+@@ -2543,6 +2561,14 @@ run_main_loop_once(void)
    return 1;
  }
  
@@ -53,7 +73,7 @@ index 0ab8f10..2a1a12a 100644
  /** Run the run_main_loop_once() function until it declares itself done,
   * and return its final return value.
   *
-@@ -2551,6 +2571,9 @@ run_main_loop_once(void)
+@@ -2551,6 +2577,9 @@ run_main_loop_once(void)
  static int
  run_main_loop_until_done(void)
  {
