@@ -42,16 +42,13 @@ addons:
 
 install:
   - if [ "$MKOK_CXX" != "" ]; then export CXX=$MKOK_CXX; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      brew upgrade;
-      brew install libevent;
-    fi
 
 before_script:
   - if [ "$GCOV" != "" ]; then pip install --user --upgrade cpp-coveralls; fi
 
 script:
   - ./autogen.sh
+  - ./script/mkpm install `cat mkpm-requirements.txt`
   - ./script/mkpm shell ./configure -q $COVERAGE $VALGRIND
   - if [ "$VALGRIND" != "" ]; then
       make run-valgrind V=0;
