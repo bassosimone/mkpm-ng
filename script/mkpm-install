@@ -5,7 +5,7 @@
 
 if [ $# -eq 0 ]; then
     echo "usage: $0 [package...]"
-    echo "e.g. $0 zlib libressl libevent tor"
+    echo "e.g. $0 tor"
     exit 0
 fi
 

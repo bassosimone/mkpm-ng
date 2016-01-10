@@ -5,7 +5,7 @@
 
 if [ $# -eq 0 ]; then
     echo "usage: i386|x86_64|armv7|armv7s|arm64 [command [args...]]"
-    echo "e.g. $0 armv7s ./script/mkpm-install zlib libressl libevent tor"
+    echo "e.g. $0 armv7s ./script/mkpm install tor"
     exit 0
 fi
 

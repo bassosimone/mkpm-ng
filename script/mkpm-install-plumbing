@@ -39,10 +39,11 @@ if [ $# -ne 1 ]; then
 fi
 
 install -d $mkpm_root
-install -d $mkpm_root/installed
 install -d $mkpm_root/deps
-install -d $mkpm_root/src
 install -d $mkpm_root/dist
+install -d $mkpm_root/installed
+install -d $mkpm_root/resource
+install -d $mkpm_root/src
 
 pkg_depend() {
     if [ -f $mkpm_root/installed/$pkg_name ]; then
