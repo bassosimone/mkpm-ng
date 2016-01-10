@@ -11,12 +11,17 @@ if [ -z "$mkpm_spec_branch" ]; then
 fi
 
 for name in Doxyfile.in Makefile.am configure.ac .clang-format .gitignore      \
-            .travis.yml autogen.sh include.am Vagrantfile                      \
+            .travis.yml autogen.sh include.am Vagrantfile.in                   \
             mkpm-requirements.txt apt-requirements.txt; do
     echo "$name:"
     curl -#O $mkpm_spec_repo/$mkpm_spec_branch/template/$name
 done
 chmod +x autogen.sh
+
+# Edit Vagrantfile.in in place and remove the template
+PACKAGE_NAME=$(basename $(pwd))
+sed "s/@PACKAGE_NAME@/$PACKAGE_NAME/g" Vagrantfile.in > Vagrantfile
+rm Vagrantfile.in
 
 install -d m4
 echo "m4/mkpm.m4:"

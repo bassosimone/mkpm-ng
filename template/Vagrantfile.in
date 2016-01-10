@@ -5,7 +5,7 @@ Vagrant.configure(2) do |config|
     v.memory = 1024
   end
   config.vm.provision "shell", inline: <<-SHELL
-    REPOSITORY="$(basename $(pwd))"
+    REPOSITORY="@PACKAGE_NAME@"
     set -e
     sudo apt-get install -y git                                             && \
       git clone https://github.com/bassosimone/$REPOSITORY                  && \
