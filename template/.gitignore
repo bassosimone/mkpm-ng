@@ -8,6 +8,7 @@
 .DS_Store
 .deps
 .dirstamp
+.vagrant
 Doxyfile
 Makefile
 Makefile.in
