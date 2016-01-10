@@ -7,6 +7,7 @@ rm -rf include.am
 
 install -d example
 echo "" >> include.am
+rm -f example/.gitignore
 for source in `ls example/*.cpp`; do
     binary=`echo $source | sed -e 's|.cpp$||g'`
     slug=`echo $binary | sed -e 's|/|_|g' -e 's|-|_|g'`
@@ -14,7 +15,7 @@ for source in `ls example/*.cpp`; do
     echo "if BUILD_EXAMPLES" >> include.am
     echo "    noinst_PROGRAMS += $binary" >> include.am
     echo "endif" >> include.am
-    echo "$binary" >> .gitignore
+    echo "`basename $binary`" >> example/.gitignore
 done
 
 install -d include/mkok
@@ -29,6 +30,7 @@ done
 
 install -d test
 echo "" >> include.am
+rm -f test/.gitignore
 for source in `ls test/*.cpp`; do
     binary=`echo $source | sed -e 's|.cpp$||g'`
     slug=`echo $binary | sed -e 's|/|_|g' -e 's|-|_|g'`
@@ -37,5 +39,5 @@ for source in `ls test/*.cpp`; do
     echo "    check_PROGRAMS += $binary" >> include.am
     echo "    TESTS += $binary" >> include.am
     echo "endif" >> include.am
-    echo "$binary" >> .gitignore
+    echo "`basename $binary`" >> test/.gitignore
 done
