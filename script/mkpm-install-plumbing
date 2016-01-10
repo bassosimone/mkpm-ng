@@ -14,16 +14,23 @@ if [ -z "$mkpm_spec_branch" ]; then
 fi
 
 mkpm_get_resource() {
-    install -d $mkpm_root/`dirname $1`
-    curl -#o $mkpm_root/$1 $mkpm_spec_repo/$mkpm_spec_branch/mkpm_modules/$1
+    install -d $mkpm_root/resource/`dirname $1`
+    if [ ! -f $mkpm_root/$1 ]; then
+        echo "get remote resource: $1"
+        curl -#o $mkpm_root/resource/$1                                        \
+            $mkpm_spec_repo/$mkpm_spec_branch/mkpm_modules/$1
+    else
+        echo "prefer local resource: $1"
+        cp $mkpm_root/$1 $mkpm_root/resource/$1
+    fi
 }
 mkpm_apply_patch() {
     mkpm_get_resource $1
-    git apply $mkpm_root/$1
+    git apply $mkpm_root/resource/$1
 }
 mkpm_install_resource() {
     mkpm_get_resource $1
-    install $mkpm_root/$1 $2
+    install $mkpm_root/resource/$1 $2
 }
 
 if [ $# -ne 1 ]; then
