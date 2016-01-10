@@ -118,7 +118,7 @@ export LDFLAGS="$LDFLAGS -L$mkpm_root/dist/lib"
 
 echo "- spec($1)"
 mkpm_get_resource pkg/$1/spec.sh
-. $mkpm_root/pkg/$1/spec.sh
+. $mkpm_root/resource/pkg/$1/spec.sh
 test -z "$pkg_branch" && pkg_branch=master
 
 saved_pwd=`pwd`  # save directory
