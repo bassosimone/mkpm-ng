@@ -1,1 +1,3 @@
-autoconf g++ libtool
+autoconf
+g++
+libtool
