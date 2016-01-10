@@ -4,6 +4,6 @@
 # information on the copying conditions.
 
 mkpm_root=`pwd`/mkpm_modules
-if [ -f $mkpm_root/.installed/$1 ]; then
-    rm -f $mkpm_root/.installed/$1
+if [ -f $mkpm_root/installed/$1 ]; then
+    rm -f $mkpm_root/installed/$1
 fi
