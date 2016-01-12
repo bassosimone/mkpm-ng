@@ -15,3 +15,9 @@ pkg_clone() {
         mkpm_apply_patch pkg/$pkg_name/000.diff
     fi
 }
+
+# Disable asm because it causes (probably innocuous?) valgrind errors
+mkpm_configure_flags="--disable-asm $mkpm_configure_flags"
+
+# Use two cores because this library is huge
+mkpm_make_flags="-j2 $mkpm_make_flags"
