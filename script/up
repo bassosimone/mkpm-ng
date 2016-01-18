@@ -10,7 +10,7 @@ if [ -z "$mkpm_spec_branch" ]; then
 fi
 
 for name in Doxyfile.in Makefile.am configure.ac .clang-format .gitignore      \
-            .travis.yml autogen.sh include.am Vagrantfile.in                   \
+            .travis.yml autogen.sh Vagrantfile.in                              \
             mkpm-requirements.txt apt-requirements.txt; do
     echo "$name:"
     curl -#O $mkpm_spec_repo/$mkpm_spec_branch/template/$name
