@@ -3,41 +3,45 @@
 # Measurement-kit is free software. See AUTHORS and LICENSE for more
 # information on the copying conditions.
 
-rm -rf include.am
+echo "" > example/include.am
+echo "" > example/.gitignore
+echo "" > src/include.am
+echo "" > test/include.am
+echo "" > test/.gitignore
 
-install -d example
-echo "" >> include.am
-rm -f example/.gitignore
-for source in `ls example/*.cpp`; do
+for source in `ls example/*/*.cpp`; do
     binary=`echo $source | sed -e 's|.cpp$||g'`
     slug=`echo $binary | sed -e 's|/|_|g' -e 's|-|_|g'`
-    echo "${slug}_SOURCES = $source" >> include.am
-    echo "if BUILD_EXAMPLES" >> include.am
-    echo "    noinst_PROGRAMS += $binary" >> include.am
-    echo "endif" >> include.am
+    echo "${slug}_SOURCES = $source" >> example/include.am
+    echo "if BUILD_EXAMPLES" >> example/include.am
+    echo "    noinst_PROGRAMS += $binary" >> example/include.am
+    echo "endif" >> example/include.am
     echo "`basename $binary`" >> example/.gitignore
 done
 
-install -d include/mkok
-echo "" >> include.am
-dir="mkok"
-slug=`echo $dir | sed 's|/||g'`
-echo "${slug}includedir = \$(includedir)/$dir" >> include.am
-echo "${slug}include_HEADERS = # Empty" >> include.am
-for file in `ls include/$dir/*.hpp`; do
-    echo "${slug}include_HEADERS += $file" >> include.am
+for dir in `ls -d include/measurement_kit/*`; do
+    dir=`echo $dir | sed 's/^include\///g'`
+    slug=`echo $dir | sed 's|/||g' | sed 's/measurement_kit//g'`
+    echo "${slug}includedir = \$(includedir)/$dir" >> src/include.am
+    echo "${slug}include_HEADERS = # Empty" >> src/include.am
+    for file in `ls include/$dir/*.hpp`; do
+        echo "${slug}include_HEADERS += $file" >> src/include.am
+    done
+done
+echo "libmeasurement_kit_la_SOURCES = # empty" >> src/include.am
+for source in `ls src/*/*.cpp`; do
+    binary=`echo $source | sed -e 's|.cpp$||g'`
+    echo "libmeasurement_kit_la_SOURCES += $source" >> src/include.am
 done
 
-install -d test
-echo "" >> include.am
-rm -f test/.gitignore
-for source in `ls test/*.cpp`; do
+for source in `ls test/*/*.cpp`; do
     binary=`echo $source | sed -e 's|.cpp$||g'`
     slug=`echo $binary | sed -e 's|/|_|g' -e 's|-|_|g'`
-    echo "${slug}_SOURCES = $source" >> include.am
-    echo "if BUILD_TESTS" >> include.am
-    echo "    check_PROGRAMS += $binary" >> include.am
-    echo "    TESTS += $binary" >> include.am
-    echo "endif" >> include.am
+    echo "${slug}_SOURCES = $source" >> test/include.am
+    echo "${slug}_LDADD = libmeasurement_kit.la" >> test/include.am
+    echo "if BUILD_TESTS" >> test/include.am
+    echo "    check_PROGRAMS += $binary" >> test/include.am
+    echo "    TESTS += $binary" >> test/include.am
+    echo "endif" >> test/include.am
     echo "`basename $binary`" >> test/.gitignore
 done

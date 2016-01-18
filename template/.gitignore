@@ -1,6 +1,7 @@
 *.dSYM
 *.gcda
 *.gcno
+*.lo
 *.log
 *.o
 *.swp
@@ -8,6 +9,7 @@
 .DS_Store
 .deps
 .dirstamp
+.libs
 .vagrant
 Doxyfile
 Makefile
@@ -26,6 +28,7 @@ configure
 depcomp
 doc
 install-sh
+libmeasurement_kit.la
 libtool
 ltmain.sh
 m4/libtool.m4

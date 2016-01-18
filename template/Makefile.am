@@ -17,4 +17,8 @@ run-valgrind: $(check_PROGRAMS)
 	  $(VALGRIND) $$test_name || exit 1;                                   \
 	done
 
-include include.am
+include example/include.am
+include src/include.am
+include test/include.am
+
+lib_LTLIBRARIES = libmeasurement_kit.la

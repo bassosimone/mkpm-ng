@@ -59,6 +59,5 @@ script:
 after_script:
   - if [ "$GCOV" != "" ]; then
       coveralls --gcov $(which $GCOV) --gcov-options '\-lp'
-                --exclude mk_modules --exclude 'example/*.cpp'
-                --exclude config.h;
+                --exclude mkpm_modules --exclude config.h;
     fi
